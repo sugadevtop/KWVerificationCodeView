@@ -108,8 +108,18 @@ public protocol KWVerificationCodeViewDelegate: class {
 
   // MARK: - IBOutlets
   @IBOutlet var view: UIView!
-
-  // MARK: - Variables
+    
+    @objc func pressedView(_ sender: Any) {
+        for textFieldView in textFieldViews {
+            if textFieldView.numberTextField.text!.trim() == "" {
+                textFieldView.activate()
+                return
+            }
+        }
+        textFieldViews.last?.activate()
+    }
+    
+    // MARK: - Variables
   public var isTappable: Bool = false {
     didSet {
       view.isUserInteractionEnabled = isTappable
@@ -179,9 +189,16 @@ public protocol KWVerificationCodeViewDelegate: class {
   // MARK: - Private Methods
   private func setup() {
     loadViewFromNib()
-
+    
     setupTextFieldViews()
     setupVerificationCodeView()
+    let fullViewButton = UIButton(frame: view.bounds)
+    fullViewButton.setTitle("", for: .normal)
+    fullViewButton.backgroundColor = .clear
+    fullViewButton.addTarget(self, action: #selector(pressedView(_:)), for: .touchUpInside)
+    //addSubview(fullViewButton)
+    insertSubview(fullViewButton, at: 1000)
+    //bringSubviewToFront(fullViewButton)
   }
 
   private func setupTextFieldViews() {
@@ -207,8 +224,8 @@ public protocol KWVerificationCodeViewDelegate: class {
     for textFieldView in textFieldViews {
       textFieldView.delegate = self
     }
-
-    textFieldViews.first?.activate()
+    
+    //textFieldViews.first?.activate()
   }
 }
 
